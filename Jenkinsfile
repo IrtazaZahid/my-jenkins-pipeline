@@ -1,10 +1,17 @@
 pipeline {
     agent any
     
+    environment {
+        APP_NAME = 'MySecureApp'
+        APP_VERSION = '1.0.0'
+        BUILD_ENV = 'development'
+    }
+    
     stages {
         stage('Build') {
             steps {
-                echo 'Building..'
+                echo "Building ${APP_NAME} version ${APP_VERSION}"
+                echo "Environment: ${BUILD_ENV}"
             }
         }
         
@@ -13,20 +20,20 @@ pipeline {
                 branch 'main'
             }
             steps {
-                echo 'Testing.. (only on main branch)'
+                echo "Testing ${APP_NAME} version ${APP_VERSION}"
             }
         }
         
         stage('Deploy') {
             steps {
-                echo 'Deploying....'
+                echo "Deploying ${APP_NAME} version ${APP_VERSION} to ${BUILD_ENV}"
             }
         }
     }
     
     post {
         always {
-            echo 'Pipeline execution finished'
+            echo "Pipeline execution finished for ${APP_NAME}"
         }
         success {
             echo '✅ Pipeline succeeded!'
