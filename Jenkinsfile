@@ -1,32 +1,37 @@
 pipeline {
     agent any
     
+    parameters {
+        booleanParam(name: 'executeTests', defaultValue: true, description: 'Run the test stage?')
+        stringParam(name: 'VERSION', defaultValue: '1.0.0', description: 'Application version to deploy')
+        choiceParam(name: 'ENVIRONMENT', choices: ['development', 'staging', 'production'], description: 'Deployment environment')
+    }
+    
     environment {
         APP_NAME = 'MySecureApp'
-        APP_VERSION = '1.0.0'
-        BUILD_ENV = 'development'
     }
     
     stages {
         stage('Build') {
             steps {
-                echo "Building ${APP_NAME} version ${APP_VERSION}"
-                echo "Environment: ${BUILD_ENV}"
+                echo "Building ${APP_NAME} version ${params.VERSION}"
+                echo "Environment: ${params.ENVIRONMENT}"
             }
         }
         
         stage('Test') {
             when {
-                branch 'main'
+                expression { params.executeTests == true }
             }
             steps {
-                echo "Testing ${APP_NAME} version ${APP_VERSION}"
+                echo "Testing ${APP_NAME} version ${params.VERSION}"
+                echo "Running all test suites..."
             }
         }
         
         stage('Deploy') {
             steps {
-                echo "Deploying ${APP_NAME} version ${APP_VERSION} to ${BUILD_ENV}"
+                echo "Deploying ${APP_NAME} version ${params.VERSION} to ${params.ENVIRONMENT}"
             }
         }
         
@@ -35,7 +40,9 @@ pipeline {
                 echo "Build number: ${env.BUILD_NUMBER}"
                 echo "Job name: ${env.JOB_NAME}"
                 echo "Branch: ${env.BRANCH_NAME}"
-                echo "Workspace: ${env.WORKSPACE}"
+                echo "Execute Tests: ${params.executeTests}"
+                echo "Version: ${params.VERSION}"
+                echo "Environment: ${params.ENVIRONMENT}"
             }
         }
     }
