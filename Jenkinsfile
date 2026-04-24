@@ -29,6 +29,15 @@ pipeline {
                 echo "Deploying ${APP_NAME} version ${APP_VERSION} to ${BUILD_ENV}"
             }
         }
+        
+        stage('Info') {
+            steps {
+                echo "Build number: ${env.BUILD_NUMBER}"
+                echo "Job name: ${env.JOB_NAME}"
+                echo "Branch: ${env.BRANCH_NAME}"
+                echo "Workspace: ${env.WORKSPACE}"
+            }
+        }
     }
     
     post {
